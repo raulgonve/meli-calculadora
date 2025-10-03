@@ -271,16 +271,26 @@
         <div>
           <div class="section-title">Entradas</div>
 
-          <label style="display:block">Costo base</label>
           <div class="two-col">
-            <input id="costUSD" type="number" min="0" step="0.01" placeholder="USD" value="130" />
-            <input id="costARS" type="number" min="0" step="0.01" placeholder="ARS" />
+            <div>
+              <label for="costUSD" style="display:block">Costo base (USD)</label>
+              <input id="costUSD" type="number" min="0" step="0.01" placeholder="USD" value="130" />
+            </div>
+            <div>
+              <label for="costARS" style="display:block">Costo base (ARS)</label>
+              <input id="costARS" type="number" min="0" step="0.01" placeholder="ARS" />
+            </div>
           </div>
 
-          <label style="display:block;margin-top:10px">Precio de venta</label>
-          <div class="two-col">
-            <input id="priceUSD" type="number" min="0" step="0.01" placeholder="USD" value="185" />
-            <input id="priceARS" type="number" min="0" step="0.01" placeholder="ARS" />
+          <div class="two-col" style="margin-top:10px">
+            <div>
+              <label for="priceUSD" style="display:block">Precio de venta (USD)</label>
+              <input id="priceUSD" type="number" min="0" step="0.01" placeholder="USD" value="185" />
+            </div>
+            <div>
+              <label for="priceARS" style="display:block">Precio de venta (ARS)</label>
+              <input id="priceARS" type="number" min="0" step="0.01" placeholder="ARS" />
+            </div>
           </div>
 
           <details>
