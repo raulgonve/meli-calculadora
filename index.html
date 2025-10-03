@@ -1,74 +1,287 @@
 <!doctype html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Calculadora de Precio de Venta</title>
   <style>
-    :root{
-      --bg:#0f172a; /* slate-900 */
-      --card:#111827; /* gray-900 */
-      --muted:#94a3b8; /* slate-400 */
-      --text:#e5e7eb; /* gray-200 */
-      --accent:#22c55e; /* green-500 */
-      --danger:#ef4444; /* red-500 */
-      --warning:#f59e0b; /* amber-500 */
-      --border:#1f2937; /* gray-800 */
+    :root {
+      --bg: #0f172a;
+      /* slate-900 */
+      --card: #111827;
+      /* gray-900 */
+      --muted: #94a3b8;
+      /* slate-400 */
+      --text: #e5e7eb;
+      /* gray-200 */
+      --accent: #22c55e;
+      /* green-500 */
+      --danger: #ef4444;
+      /* red-500 */
+      --warning: #f59e0b;
+      /* amber-500 */
+      --border: #1f2937;
+      /* gray-800 */
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:linear-gradient(180deg,#0b1223,#0f172a);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;}
-    .container{max-width:980px;margin:32px auto;padding:24px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-    h1{margin:0 0 12px;font-size:24px}
-    p.lead{margin:0 0 20px;color:var(--muted)}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .row{display:flex;gap:12px;align-items:center}
-    label{font-size:13px;color:var(--muted)}
-    input[type="number"], input[type="text"]{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:#0b1223;color:var(--text);outline:none}
-    input[type="number"]:focus{border-color:#334155}
-    .small{font-size:12px;color:var(--muted)}
-    .section-title{margin:20px 0 8px;color:#cbd5e1;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.06em}
-    .pill{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:12px}
-    .btn{appearance:none;border:none;padding:10px 14px;border-radius:12px;background:#1f2937;color:#e5e7eb;cursor:pointer}
-    .btn:hover{background:#273244}
-    .btn.primary{background:var(--accent);color:#08130b;font-weight:700}
-    .btn.ghost{background:transparent;border:1px solid var(--border)}
-    .btn.danger{background:var(--danger)}
-    .actions{display:flex;gap:10px;flex-wrap:wrap}
-    .results{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
-    .tile{background:#0b1223;border:1px solid var(--border);border-radius:14px;padding:14px}
-    .tile .label{color:var(--muted);font-size:12px}
-    .tile .value{font-size:22px;font-weight:800;margin-top:4px}
-    .neg{color:var(--danger)}
-    .pos{color:var(--accent)}
-    details{margin-top:8px;border:1px solid var(--border);border-radius:12px}
-    summary{padding:12px 14px;cursor:pointer;color:#cbd5e1}
-    .details-body{padding:12px 14px;border-top:1px solid var(--border)}
-    table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{padding:8px;border-bottom:1px solid var(--border);text-align:right}
-    th:first-child,td:first-child{text-align:left}
-    .muted{color:var(--muted)}
-    .footer{margin-top:22px;color:var(--muted);font-size:12px}
-    @media (max-width:860px){.grid{grid-template-columns:1fr}.results{grid-template-columns:1fr 1fr}}
-    @media (max-width:560px){.results{grid-template-columns:1fr}}
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #0b1223, #0f172a);
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Helvetica, Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 32px auto;
+      padding: 24px
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .25)
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 24px
+    }
+
+    p.lead {
+      margin: 0 0 20px;
+      color: var(--muted)
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #0b1223;
+      color: var(--text);
+      outline: none
+    }
+
+    input[type="number"]:focus {
+      border-color: #334155
+    }
+
+    .small {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .section-title {
+      margin: 20px 0 8px;
+      color: #cbd5e1;
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .06em
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #1f2937;
+      color: #e5e7eb;
+      cursor: pointer
+    }
+
+    .btn:hover {
+      background: #273244
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      color: #08130b;
+      font-weight: 700
+    }
+
+    .btn.ghost {
+      background: transparent;
+      border: 1px solid var(--border)
+    }
+
+    .btn.danger {
+      background: var(--danger)
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px
+    }
+
+    .tile {
+      background: #0b1223;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px
+    }
+
+    .tile .label {
+      color: var(--muted);
+      font-size: 12px
+    }
+
+    .tile .value {
+      font-size: 22px;
+      font-weight: 800;
+      margin-top: 4px
+    }
+
+    .neg {
+      color: var(--danger)
+    }
+
+    .pos {
+      color: var(--accent)
+    }
+
+    details {
+      margin-top: 8px;
+      border: 1px solid var(--border);
+      border-radius: 12px
+    }
+
+    summary {
+      padding: 12px 14px;
+      cursor: pointer;
+      color: #cbd5e1
+    }
+
+    .details-body {
+      padding: 12px 14px;
+      border-top: 1px solid var(--border)
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px
+    }
+
+    th,
+    td {
+      padding: 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: right
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .footer {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 12px
+    }
+
+    @media (max-width:860px) {
+      .grid {
+        grid-template-columns: 1fr
+      }
+
+      .results {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+
+    @media (max-width:560px) {
+      .results {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="card">
       <h1>Calculadora de Precio de Venta</h1>
-      <p class="lead">Ingresa <strong>costo base</strong> y <strong>precio de venta</strong>. La calculadora aplica IIBB, IVA, MELI y Publicidad sobre el precio de venta, más costos fijos de Envío y Logística.
-      <span class="pill">IIBB 4% · IVA 7% · MELI 15% · Ads 3% · Envío 5 USD · Logística 2 USD</span></p>
+      <p class="lead">Ingresá <strong>costo</strong> y <strong>precio de venta</strong> en USD o ARS. La calculadora
+        sincroniza ambos usando el tipo de cambio y aplica IIBB, IVA, MELI y Publicidad sobre el precio de venta, más
+        costos fijos de Envío y Logística.
+        <span class="pill">IIBB 4% · IVA 7% · MELI 15% · Ads 3% · Envío 5 USD · Logística 2 USD</span>
+      </p>
 
       <div class="grid">
         <div>
           <div class="section-title">Entradas</div>
-          <label for="cost">Costo base (USD)</label>
-          <input id="cost" type="number" min="0" step="0.01" value="130" />
 
-          <label for="price" style="margin-top:10px;display:block">Precio de venta (USD)</label>
-          <input id="price" type="number" min="0" step="0.01" value="185" />
+          <label style="display:block">Costo base</label>
+          <div class="two-col">
+            <input id="costUSD" type="number" min="0" step="0.01" placeholder="USD" value="130" />
+            <input id="costARS" type="number" min="0" step="0.01" placeholder="ARS" />
+          </div>
+
+          <label style="display:block;margin-top:10px">Precio de venta</label>
+          <div class="two-col">
+            <input id="priceUSD" type="number" min="0" step="0.01" placeholder="USD" value="185" />
+            <input id="priceARS" type="number" min="0" step="0.01" placeholder="ARS" />
+          </div>
 
           <details>
             <summary>⚙️ Ajustes (impuestos, comisiones y fijos)</summary>
@@ -101,14 +314,19 @@
           </details>
 
           <details>
-            <summary>💱 Mostrar en ARS</summary>
+            <summary>💱 Tipo de cambio y ARS</summary>
             <div class="details-body">
               <div class="row">
                 <label for="rate" class="small">Tipo de cambio (ARS por USD)</label>
               </div>
               <input id="rate" type="number" min="0" step="0.01" value="1450" />
-              <p class="small muted">Se mostrarán equivalentes en ARS debajo de cada valor.</p>
-          </div>
+              <div class="row" style="margin-top:10px; gap:8px">
+                <button id="fetchBlue" type="button" class="btn primary">💙 Usar Dólar Blue</button>
+                <span id="blueMeta" class="small muted"></span>
+              </div>
+              <p class="small muted">Al editar USD se completa ARS y viceversa. Cambiar el tipo de cambio recalcula
+                automáticamente.</p>
+            </div>
           </details>
 
           <div class="actions" style="margin-top:14px">
@@ -139,102 +357,161 @@
           <div class="section-title">Detalle de costos (calculados sobre el PV)</div>
           <table>
             <thead>
-              <tr><th>Concepto</th><th>USD</th><th>ARS</th></tr>
+              <tr>
+                <th>Concepto</th>
+                <th>USD</th>
+                <th>ARS</th>
+              </tr>
             </thead>
             <tbody id="breakdown"></tbody>
           </table>
         </div>
       </div>
 
-      <div class="footer">Tip: el margen real (%) = Ganancia / Costo base × 100. Si ves números en rojo, estás perdiendo dinero 😉.</div>
+      <div class="footer">Tip: el margen real (%) = Ganancia / Costo base × 100. Si ves números en rojo, estás perdiendo
+        dinero 😉.</div>
     </div>
   </div>
 
-<script>
-  const $ = (id)=>document.getElementById(id);
-  const fmtUSD = (n)=> (isFinite(n)? `$ ${n.toFixed(2)}` : '—');
-  const fmtPct = (n)=> (isFinite(n)? `${n.toFixed(2)}%` : '—');
-  const fmtARS = (n, rate)=> (isFinite(n) && isFinite(rate) && rate>0? `ARS ${ (n*rate).toFixed(0) }` : '');
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const fmtUSD = (n) => (isFinite(n) ? `$ ${n.toFixed(2)}` : '—');
+    const fmtPct = (n) => (isFinite(n) ? `${n.toFixed(2)}%` : '—');
+    const fmtARS = (n, rate) => (isFinite(n) && isFinite(rate) && rate > 0 ? `ARS ${(n * rate).toFixed(0)}` : '');
 
-  const inputs = ['cost','price','iibb','iva','meli','ads','ship','log','rate'].map($);
-  inputs.forEach(inp=> inp.addEventListener('input', recalc));
+    let isSyncing = false; // evita bucles al sincronizar USD/ARS
 
-  function recalc(){
-    const cost = parseFloat($('cost').value) || 0;
-    const pv   = parseFloat($('price').value) || 0;
-    const iibb = (parseFloat($('iibb').value)||0) / 100;
-    const iva  = (parseFloat($('iva').value)||0) / 100;
-    const meli = (parseFloat($('meli').value)||0) / 100;
-    const ads  = (parseFloat($('ads').value)||0) / 100;
-    const ship = parseFloat($('ship').value) || 0;
-    const log  = parseFloat($('log').value) || 0;
-    const rate = parseFloat($('rate').value) || 0;
+    const inputs = ['costUSD', 'costARS', 'priceUSD', 'priceARS', 'iibb', 'iva', 'meli', 'ads', 'ship', 'log', 'rate'].map($);
+    inputs.forEach(inp => inp.addEventListener('input', onInput));
 
-    const vIibb = pv * iibb;
-    const vIva  = pv * iva;
-    const vMeli = pv * meli;
-    const vAds  = pv * ads;
+    function onInput(e) {
+      const id = e.target.id;
+      if (['costUSD', 'costARS', 'priceUSD', 'priceARS', 'rate'].includes(id)) {
+        syncCurrency(id);
+      }
+      recalc();
+    }
 
-    const costTotal = cost + vIibb + vIva + vMeli + vAds + ship + log;
-    const profit    = pv - costTotal;
-    const marginPct = cost>0 ? (profit / cost) * 100 : NaN;
+    function syncCurrency(source) {
+      if (isSyncing) return;
+      isSyncing = true;
+      const rate = parseFloat($('rate').value) || 0;
+      const costUSD = parseFloat($('costUSD').value);
+      const costARS = parseFloat($('costARS').value);
+      const priceUSD = parseFloat($('priceUSD').value);
+      const priceARS = parseFloat($('priceARS').value);
 
-    // Render tiles
-    const costTotalEl = $('costTotal');
-    const profitEl = $('profit');
-    const marginEl = $('margin');
+      if (rate > 0) {
+        if (source === 'costUSD') {
+          $('costARS').value = isFinite(costUSD) ? (costUSD * rate).toFixed(2) : '';
+        } else if (source === 'costARS') {
+          $('costUSD').value = isFinite(costARS) ? (costARS / rate).toFixed(2) : '';
+        } else if (source === 'priceUSD') {
+          $('priceARS').value = isFinite(priceUSD) ? (priceUSD * rate).toFixed(2) : '';
+        } else if (source === 'priceARS') {
+          $('priceUSD').value = isFinite(priceARS) ? (priceARS / rate).toFixed(2) : '';
+        } else if (source === 'rate') {
+          if (isFinite(costUSD)) $('costARS').value = (costUSD * rate).toFixed(2);
+          if (isFinite(priceUSD)) $('priceARS').value = (priceUSD * rate).toFixed(2);
+        }
+      }
+      isSyncing = false;
+    }
 
-    costTotalEl.textContent = fmtUSD(costTotal);
-    $('costTotalARS').textContent = fmtARS(costTotal, rate);
+    function recalc() {
+      const cost = parseFloat($('costUSD').value) || 0;
+      const pv = parseFloat($('priceUSD').value) || 0;
+      const rate = parseFloat($('rate').value) || 0;
 
-    profitEl.textContent = fmtUSD(profit);
-    $('profitARS').textContent = fmtARS(profit, rate);
+      const iibb = (parseFloat($('iibb').value) || 0) / 100;
+      const iva = (parseFloat($('iva').value) || 0) / 100;
+      const meli = (parseFloat($('meli').value) || 0) / 100;
+      const ads = (parseFloat($('ads').value) || 0) / 100;
+      const ship = parseFloat($('ship').value) || 0;
+      const log = parseFloat($('log').value) || 0;
 
-    marginEl.textContent = fmtPct(marginPct);
+      const vIibb = pv * iibb;
+      const vIva = pv * iva;
+      const vMeli = pv * meli;
+      const vAds = pv * ads;
 
-    // Color states
-    profitEl.classList.toggle('neg', profit < 0);
-    profitEl.classList.toggle('pos', profit >= 0);
-    marginEl.classList.toggle('neg', marginPct < 0);
-    marginEl.classList.toggle('pos', marginPct >= 0);
+      const costTotal = cost + vIibb + vIva + vMeli + vAds + ship + log;
+      const profit = pv - costTotal;
+      const marginPct = cost > 0 ? (profit / cost) * 100 : NaN;
 
-    // Breakdown table
-    const rows = [
-      ['IIBB', vIibb],
-      ['IVA', vIva],
-      ['MELI', vMeli],
-      ['Publicidad', vAds],
-      ['Envío', ship],
-      ['Logística', log],
-    ];
-    const tbody = $('breakdown');
-    tbody.innerHTML = rows.map(([k,v])=>`<tr><td>${k}</td><td>${fmtUSD(v)}</td><td>${fmtARS(v,rate)}</td></tr>`).join('')
-      + `<tr><td><strong>PV ingresado</strong></td><td><strong>${fmtUSD(pv)}</strong></td><td><strong>${fmtARS(pv,rate)}</strong></td></tr>`
-      + `<tr><td><strong>Costo total</strong></td><td><strong>${fmtUSD(costTotal)}</strong></td><td><strong>${fmtARS(costTotal,rate)}</strong></td></tr>`
-      + `<tr><td><strong>Ganancia</strong></td><td><strong>${fmtUSD(profit)}</strong></td><td><strong>${fmtARS(profit,rate)}</strong></td></tr>`;
-  }
+      $('costTotal').textContent = fmtUSD(costTotal);
+      $('costTotalARS').textContent = fmtARS(costTotal, rate);
 
-  function toParams(){
-    const data = {
-      c:$('cost').value, p:$('price').value, ii:$('iibb').value, iv:$('iva').value, me:$('meli').value,
-      ad:$('ads').value, sh:$('ship').value, lg:$('log').value, r:$('rate').value
-    };
-    return new URLSearchParams(data).toString();
-  }
-  function fromParams(){
-    const q = new URLSearchParams(location.search);
-    const map = {c:'cost', p:'price', ii:'iibb', iv:'iva', me:'meli', ad:'ads', sh:'ship', lg:'log', r:'rate'};
-    Object.entries(map).forEach(([k,id])=>{ if(q.has(k)) $(id).value = q.get(k); });
-  }
+      const profitEl = $('profit');
+      profitEl.textContent = fmtUSD(profit);
+      $('profitARS').textContent = fmtARS(profit, rate);
 
-  $('share').addEventListener('click', async ()=>{
-    const url = `${location.origin}${location.pathname}?${toParams()}`;
-    try{ await navigator.clipboard.writeText(url); $('share').textContent = '✅ Enlace copiado'; setTimeout(()=>$('share').textContent='🔗 Copiar enlace',1800);}catch(e){ alert(url); }
-  });
-  $('reset').addEventListener('click', ()=>{ location.href = location.pathname; });
+      const marginEl = $('margin');
+      marginEl.textContent = fmtPct(marginPct);
 
-  fromParams();
-  recalc();
-</script>
+      profitEl.classList.toggle('neg', profit < 0);
+      profitEl.classList.toggle('pos', profit >= 0);
+      marginEl.classList.toggle('neg', marginPct < 0);
+      marginEl.classList.toggle('pos', marginPct >= 0);
+
+      const rows = [
+        ['IIBB', vIibb],
+        ['IVA', vIva],
+        ['MELI', vMeli],
+        ['Publicidad', vAds],
+        ['Envío', ship],
+        ['Logística', log],
+      ];
+      const tbody = $('breakdown');
+      tbody.innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${fmtUSD(v)}</td><td>${fmtARS(v, rate)}</td></tr>`).join('')
+        + `<tr><td><strong>PV ingresado</strong></td><td><strong>${fmtUSD(pv)}</strong></td><td><strong>${fmtARS(pv, rate)}</strong></td></tr>`
+        + `<tr><td><strong>Costo total</strong></td><td><strong>${fmtUSD(costTotal)}</strong></td><td><strong>${fmtARS(costTotal, rate)}</strong></td></tr>`
+        + `<tr><td><strong>Ganancia</strong></td><td><strong>${fmtUSD(profit)}</strong></td><td><strong>${fmtARS(profit, rate)}</strong></td></tr>`;
+    }
+
+    function toParams() {
+      const data = {
+        cu: $('costUSD').value, ca: $('costARS').value, pu: $('priceUSD').value, pa: $('priceARS').value,
+        ii: $('iibb').value, iv: $('iva').value, me: $('meli').value, ad: $('ads').value, sh: $('ship').value, lg: $('log').value, r: $('rate').value
+      };
+      return new URLSearchParams(data).toString();
+    }
+    function fromParams() {
+      const q = new URLSearchParams(location.search);
+      const map = { cu: 'costUSD', ca: 'costARS', pu: 'priceUSD', pa: 'priceARS', ii: 'iibb', iv: 'iva', me: 'meli', ad: 'ads', sh: 'ship', lg: 'log', r: 'rate' };
+      Object.entries(map).forEach(([k, id]) => { if (q.has(k)) $(id).value = q.get(k); });
+      // sincronizar una vez tras cargar por URL
+      syncCurrency('rate');
+    }
+
+    $('share').addEventListener('click', async () => {
+      const url = `${location.origin}${location.pathname}?${toParams()}`;
+      try { await navigator.clipboard.writeText(url); $('share').textContent = '✅ Enlace copiado'; setTimeout(() => $('share').textContent = '🔗 Copiar enlace', 1800); } catch (e) { alert(url); }
+    });
+    $('reset').addEventListener('click', () => { location.href = location.pathname; });
+
+    fromParams();
+    recalc();
+    async function loadBlue() {
+      try {
+        const res = await fetch('https://dolarapi.com/v1/dolares/blue');
+        const data = await res.json();
+        if (data && data.venta) {
+          const rate = parseFloat(data.venta);
+          $('rate').value = isFinite(rate) ? rate : $('rate').value;
+          const when = data.fechaActualizacion ? new Date(data.fechaActualizacion).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+          $('blueMeta').textContent = `Blue venta: ${rate} • ${when ? 'Act.' + ' ' + when : ''}`;
+          syncCurrency('rate');
+          recalc();
+        }
+      } catch (e) {
+        $('blueMeta').textContent = 'No se pudo obtener la cotización Blue';
+      }
+    }
+    $('fetchBlue').addEventListener('click', loadBlue);
+    // Intento automático al cargar
+    loadBlue();
+  </script>
 </body>
+
 </html>
