@@ -19,8 +19,6 @@
       /* green-500 */
       --danger: #ef4444;
       /* red-500 */
-      --warning: #f59e0b;
-      /* amber-500 */
       --border: #1f2937;
       /* gray-800 */
     }
@@ -83,7 +81,8 @@
     }
 
     input[type="number"],
-    input[type="text"] {
+    input[type="text"],
+    select {
       width: 100%;
       padding: 12px 14px;
       border-radius: 12px;
@@ -93,7 +92,8 @@
       outline: none
     }
 
-    input[type="number"]:focus {
+    input[type="number"]:focus,
+    select:focus {
       border-color: #334155
     }
 
@@ -254,6 +254,20 @@
       grid-template-columns: 1fr 1fr;
       gap: 10px
     }
+
+    .inline {
+      display: flex;
+      gap: 10px;
+      align-items: center
+    }
+
+    .inline>* {
+      flex: 1
+    }
+
+    .inline .pct {
+      max-width: 130px
+    }
   </style>
 </head>
 
@@ -261,9 +275,10 @@
   <div class="container">
     <div class="card">
       <h1>Calculadora de Precio de Venta</h1>
-      <p class="lead">Ingresá <strong>costo</strong> y <strong>precio de venta</strong> en USD o ARS. La calculadora
-        sincroniza ambos usando el tipo de cambio y aplica IIBB, IVA, MELI y Publicidad sobre el precio de venta, más
-        costos fijos de Envío y Logística.
+      <p class="lead">
+        Ingresá <strong>costo</strong> y <strong>precio de venta</strong> en USD o ARS. La calculadora sincroniza ambos
+        usando el tipo de cambio y aplica IIBB, IVA, MELI y Publicidad sobre el precio de venta, más costos fijos de
+        Envío y Logística.
         <span class="pill">IIBB 4% · IVA 7% · MELI 15% · Ads 3% · Envío 5 USD · Logística 2 USD</span>
       </p>
 
@@ -312,6 +327,27 @@
                 <label>Publicidad (%)</label>
                 <input id="ads" type="number" min="0" step="0.01" value="3" />
               </div>
+
+              <!-- NUEVO: Financiamiento -->
+              <div class="inline" style="grid-column: span 2;">
+                <div>
+                  <label for="finSelect">Financiamiento (cuotas)</label>
+                  <select id="finSelect">
+                    <option value="0">Sin cuotas (0%)</option>
+                    <option value="4">3 a 12 cuotas con interés bajo (4%)</option>
+                    <option value="11">3 cuotas al mismo precio (11%)</option>
+                    <option value="17.7">6 cuotas al mismo precio (17.7%)</option>
+                    <option value="24.8">9 cuotas al mismo precio (24.8%)</option>
+                    <option value="31.7">12 cuotas al mismo precio (31.7%)</option>
+                  </select>
+                </div>
+                <div class="pct">
+                  <label for="finPct">Porcentaje de financiamiento (%)</label>
+                  <input id="finPct" type="number" min="0" step="0.01" value="0" />
+                </div>
+              </div>
+              <!-- /NUEVO -->
+
               <div>
                 <label>Envío fijo (USD)</label>
                 <input id="ship" type="number" min="0" step="0.01" value="5" />
@@ -391,8 +427,12 @@
 
     let isSyncing = false; // evita bucles al sincronizar USD/ARS
 
-    const inputs = ['costUSD', 'costARS', 'priceUSD', 'priceARS', 'iibb', 'iva', 'meli', 'ads', 'ship', 'log', 'rate'].map($);
+    const inputs = ['costUSD', 'costARS', 'priceUSD', 'priceARS', 'iibb', 'iva', 'meli', 'ads', 'ship', 'log', 'rate', 'finSelect', 'finPct'].map($);
     inputs.forEach(inp => inp.addEventListener('input', onInput));
+    $('finSelect').addEventListener('change', () => {
+      $('finPct').value = $('finSelect').value; // sincroniza el porcentaje editable con la opción elegida
+      recalc();
+    });
 
     function onInput(e) {
       const id = e.target.id;
@@ -440,12 +480,15 @@
       const ship = parseFloat($('ship').value) || 0;
       const log = parseFloat($('log').value) || 0;
 
+      // Financiamiento
+      const finPct = (parseFloat($('finPct').value) || 0) / 100; // editable
       const vIibb = pv * iibb;
       const vIva = pv * iva;
       const vMeli = pv * meli;
       const vAds = pv * ads;
+      const vFin = pv * finPct;
 
-      const costTotal = cost + vIibb + vIva + vMeli + vAds + ship + log;
+      const costTotal = cost + vIibb + vIva + vMeli + vAds + vFin + ship + log;
       const profit = pv - costTotal;
       const marginPct = cost > 0 ? (profit / cost) * 100 : NaN;
 
@@ -469,6 +512,7 @@
         ['IVA', vIva],
         ['MELI', vMeli],
         ['Publicidad', vAds],
+        ['Financiamiento', vFin],
         ['Envío', ship],
         ['Logística', log],
       ];
@@ -482,13 +526,14 @@
     function toParams() {
       const data = {
         cu: $('costUSD').value, ca: $('costARS').value, pu: $('priceUSD').value, pa: $('priceARS').value,
-        ii: $('iibb').value, iv: $('iva').value, me: $('meli').value, ad: $('ads').value, sh: $('ship').value, lg: $('log').value, r: $('rate').value
+        ii: $('iibb').value, iv: $('iva').value, me: $('meli').value, ad: $('ads').value, sh: $('ship').value, lg: $('log').value,
+        r: $('rate').value, fs: $('finSelect').value, fp: $('finPct').value
       };
       return new URLSearchParams(data).toString();
     }
     function fromParams() {
       const q = new URLSearchParams(location.search);
-      const map = { cu: 'costUSD', ca: 'costARS', pu: 'priceUSD', pa: 'priceARS', ii: 'iibb', iv: 'iva', me: 'meli', ad: 'ads', sh: 'ship', lg: 'log', r: 'rate' };
+      const map = { cu: 'costUSD', ca: 'costARS', pu: 'priceUSD', pa: 'priceARS', ii: 'iibb', iv: 'iva', me: 'meli', ad: 'ads', sh: 'ship', lg: 'log', r: 'rate', fs: 'finSelect', fp: 'finPct' };
       Object.entries(map).forEach(([k, id]) => { if (q.has(k)) $(id).value = q.get(k); });
       // sincronizar una vez tras cargar por URL
       syncCurrency('rate');
@@ -502,6 +547,8 @@
 
     fromParams();
     recalc();
+
+    // Dólar Blue API
     async function loadBlue() {
       try {
         const res = await fetch('https://dolarapi.com/v1/dolares/blue');
@@ -510,7 +557,7 @@
           const rate = parseFloat(data.venta);
           $('rate').value = isFinite(rate) ? rate : $('rate').value;
           const when = data.fechaActualizacion ? new Date(data.fechaActualizacion).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
-          $('blueMeta').textContent = `Blue venta: ${rate} • ${when ? 'Act.' + ' ' + when : ''}`;
+          $('blueMeta').textContent = `Blue venta: ${rate} • ${when ? 'Act. ' + when : ''}`;
           syncCurrency('rate');
           recalc();
         }
