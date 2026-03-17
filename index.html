@@ -8,19 +8,12 @@
   <style>
     :root {
       --bg: #0f172a;
-      /* slate-900 */
       --card: #111827;
-      /* gray-900 */
       --muted: #94a3b8;
-      /* slate-400 */
       --text: #e5e7eb;
-      /* gray-200 */
       --accent: #22c55e;
-      /* green-500 */
       --danger: #ef4444;
-      /* red-500 */
       --border: #1f2937;
-      /* gray-800 */
     }
 
     * {
@@ -40,7 +33,7 @@
     }
 
     .container {
-      max-width: 980px;
+      max-width: 1250px;
       margin: 32px auto;
       padding: 24px
     }
@@ -82,7 +75,8 @@
 
     input[type="number"],
     input[type="text"],
-    select {
+    select,
+    textarea {
       width: 100%;
       padding: 12px 14px;
       border-radius: 12px;
@@ -92,8 +86,15 @@
       outline: none
     }
 
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
     input[type="number"]:focus,
-    select:focus {
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
       border-color: #334155
     }
 
@@ -215,7 +216,8 @@
     td {
       padding: 8px;
       border-bottom: 1px solid var(--border);
-      text-align: right
+      text-align: right;
+      vertical-align: middle;
     }
 
     th:first-child,
@@ -258,7 +260,7 @@
     .inline {
       display: flex;
       gap: 10px;
-      align-items: center
+      align-items: end;
     }
 
     .inline>* {
@@ -266,7 +268,64 @@
     }
 
     .inline .pct {
-      max-width: 130px
+      max-width: 170px
+    }
+
+    .bulk-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-top: 12px;
+    }
+
+    .bulk-table {
+      min-width: 1150px;
+      margin-top: 0;
+    }
+
+    .bulk-table input[type="text"],
+    .bulk-table input[type="number"] {
+      padding: 8px 10px;
+      border-radius: 8px;
+      min-width: 90px;
+    }
+
+    .bulk-table .name-col input {
+      min-width: 180px;
+    }
+
+    .totals-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .mini-tile {
+      background: #0b1223;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .mini-tile .label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .mini-tile .value {
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .paste-box {
+      margin-top: 10px;
+      display: none;
+    }
+
+    .paste-box.active {
+      display: block;
     }
   </style>
 </head>
@@ -277,9 +336,9 @@
       <h1>Calculadora de Precio de Venta</h1>
       <p class="lead">
         Ingresá <strong>costo</strong> y <strong>precio de venta</strong> en USD o ARS. La calculadora sincroniza ambos
-        usando el tipo de cambio y aplica IIBB, IVA, MELI y Publicidad sobre el precio de venta, más costos fijos de
-        Envío y Logística.
-        <span class="pill">IIBB 4% · IVA 7% · MELI 15% · Ads 3% · Envío 5 USD · Logística 2 USD</span>
+        usando el tipo de cambio y aplica IIBB, IVA, MELI, Publicidad y Financiamiento sobre el precio de venta, más
+        costos fijos de Envío y Logística.
+        <span class="pill">IIBB 4% · IVA 7% · MELI 15% · Ads 1% · Envío 5 USD · Logística 2 USD</span>
       </p>
 
       <div class="grid">
@@ -328,29 +387,27 @@
                 <input id="ads" type="number" min="0" step="0.01" value="1" />
               </div>
 
-              <!-- NUEVO: Financiamiento -->
               <div class="inline" style="grid-column: span 2;">
                 <div>
                   <label for="finSelect">Financiamiento (cuotas)</label>
                   <select id="finSelect">
                     <option value="0">Sin cuotas (0%)</option>
-                    <option value="5">3 a 12 cuotas con bajo interés (5%)</option>
-                    <option value="9.4">3 cuotas al mismo precio (9.4%)</option>
-                    <option value="15.1">6 cuotas al mismo precio (15.1%)</option>
-                    <option value="20.7">9 cuotas al mismo precio (20.7%)</option>
-                    <option value="25.9">12 cuotas al mismo precio (25.9%)</option>
+                    <option value="4">3 a 12 cuotas con bajo interés (4%)</option>
+                    <option value="9">3 cuotas al mismo precio (9%)</option>
+                    <option value="14.2">6 cuotas al mismo precio (14.2%)</option>
+                    <option value="18.9">9 cuotas al mismo precio (18.9%)</option>
+                    <option value="23.2">12 cuotas al mismo precio (23.2%)</option>
                   </select>
                 </div>
                 <div class="pct">
-                  <label for="finPct">Financiamiento (%)</label>
+                  <label for="finPct">Porcentaje de financiamiento (%)</label>
                   <input id="finPct" type="number" min="0" step="0.01" value="0" />
                 </div>
               </div>
-              <!-- /NUEVO -->
 
               <div>
                 <label>Envío fijo (USD)</label>
-                <input id="ship" type="number" min="0" step="0.01" value="6" />
+                <input id="ship" type="number" min="0" step="0.01" value="5" />
               </div>
               <div>
                 <label>Logística fija (USD)</label>
@@ -414,6 +471,61 @@
         </div>
       </div>
 
+      <div class="section-title" style="margin-top:28px">Carga masiva</div>
+      <div class="actions">
+        <button id="addRow" class="btn primary">+ Agregar fila</button>
+        <button id="togglePaste" class="btn ghost">📋 Pegar desde Excel</button>
+        <button id="clearRows" class="btn ghost">🗑 Limpiar tabla</button>
+        <button id="exportCsv" class="btn ghost">⬇ Exportar CSV</button>
+      </div>
+
+      <div id="pasteBox" class="paste-box">
+        <p class="small">Pegá filas desde Excel en este formato: <strong>Producto | Costo USD | Precio USD</strong>
+          (separado por tabulaciones).</p>
+        <textarea id="pasteArea" placeholder="Producto A	130	185&#10;Producto B	144	218.8"></textarea>
+        <div class="actions" style="margin-top:8px">
+          <button id="processPaste" class="btn primary">Procesar pegado</button>
+        </div>
+      </div>
+
+      <div class="bulk-wrap">
+        <table class="bulk-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Costo USD</th>
+              <th>Precio USD</th>
+              <th>Costo ARS</th>
+              <th>Precio ARS</th>
+              <th>Costo total USD</th>
+              <th>Ganancia USD</th>
+              <th>Margen %</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="bulkTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="totals-bar">
+        <div class="mini-tile">
+          <div class="label">Filas</div>
+          <div id="bulkRowsCount" class="value">0</div>
+        </div>
+        <div class="mini-tile">
+          <div class="label">Suma costo total USD</div>
+          <div id="bulkTotalCost" class="value">—</div>
+        </div>
+        <div class="mini-tile">
+          <div class="label">Suma ganancia USD</div>
+          <div id="bulkTotalProfit" class="value">—</div>
+        </div>
+        <div class="mini-tile">
+          <div class="label">Margen promedio %</div>
+          <div id="bulkAvgMargin" class="value">—</div>
+        </div>
+      </div>
+
       <div class="footer">Tip: el margen real (%) = Ganancia / Costo base × 100. Si ves números en rojo, estás perdiendo
         dinero 😉.</div>
     </div>
@@ -424,14 +536,17 @@
     const fmtUSD = (n) => (isFinite(n) ? `$ ${n.toFixed(2)}` : '—');
     const fmtPct = (n) => (isFinite(n) ? `${n.toFixed(2)}%` : '—');
     const fmtARS = (n, rate) => (isFinite(n) && isFinite(rate) && rate > 0 ? `ARS ${(n * rate).toFixed(0)}` : '');
+    const fmtNum = (n) => (isFinite(n) ? n.toFixed(2) : '');
 
-    let isSyncing = false; // evita bucles al sincronizar USD/ARS
+    let isSyncing = false;
 
     const inputs = ['costUSD', 'costARS', 'priceUSD', 'priceARS', 'iibb', 'iva', 'meli', 'ads', 'ship', 'log', 'rate', 'finSelect', 'finPct'].map($);
     inputs.forEach(inp => inp.addEventListener('input', onInput));
+
     $('finSelect').addEventListener('change', () => {
-      $('finPct').value = $('finSelect').value; // sincroniza el porcentaje editable con la opción elegida
+      $('finPct').value = $('finSelect').value;
       recalc();
+      recalcBulk();
     });
 
     function onInput(e) {
@@ -440,6 +555,7 @@
         syncCurrency(id);
       }
       recalc();
+      recalcBulk();
     }
 
     function syncCurrency(source) {
@@ -468,87 +584,130 @@
       isSyncing = false;
     }
 
-    function recalc() {
-      const cost = parseFloat($('costUSD').value) || 0;
-      const pv = parseFloat($('priceUSD').value) || 0;
-      const rate = parseFloat($('rate').value) || 0;
+    function getSettings() {
+      return {
+        iibb: (parseFloat($('iibb').value) || 0) / 100,
+        iva: (parseFloat($('iva').value) || 0) / 100,
+        meli: (parseFloat($('meli').value) || 0) / 100,
+        ads: (parseFloat($('ads').value) || 0) / 100,
+        fin: (parseFloat($('finPct').value) || 0) / 100,
+        ship: parseFloat($('ship').value) || 0,
+        log: parseFloat($('log').value) || 0,
+        rate: parseFloat($('rate').value) || 0
+      };
+    }
 
-      const iibb = (parseFloat($('iibb').value) || 0) / 100;
-      const iva = (parseFloat($('iva').value) || 0) / 100;
-      const meli = (parseFloat($('meli').value) || 0) / 100;
-      const ads = (parseFloat($('ads').value) || 0) / 100;
-      const ship = parseFloat($('ship').value) || 0;
-      const log = parseFloat($('log').value) || 0;
+    function calculateRow(cost, pv, settings) {
+      const vIibb = pv * settings.iibb;
+      const vIva = pv * settings.iva;
+      const vMeli = pv * settings.meli;
+      const vAds = pv * settings.ads;
+      const vFin = pv * settings.fin;
 
-      // Financiamiento
-      const finPct = (parseFloat($('finPct').value) || 0) / 100; // editable
-      const vIibb = pv * iibb;
-      const vIva = pv * iva;
-      const vMeli = pv * meli;
-      const vAds = pv * ads;
-      const vFin = pv * finPct;
-
-      const costTotal = cost + vIibb + vIva + vMeli + vAds + vFin + ship + log;
+      const costTotal = cost + vIibb + vIva + vMeli + vAds + vFin + settings.ship + settings.log;
       const profit = pv - costTotal;
       const marginPct = cost > 0 ? (profit / cost) * 100 : NaN;
 
-      $('costTotal').textContent = fmtUSD(costTotal);
-      $('costTotalARS').textContent = fmtARS(costTotal, rate);
+      return { vIibb, vIva, vMeli, vAds, vFin, costTotal, profit, marginPct };
+    }
+
+    function recalc() {
+      const cost = parseFloat($('costUSD').value) || 0;
+      const pv = parseFloat($('priceUSD').value) || 0;
+      const settings = getSettings();
+      const calc = calculateRow(cost, pv, settings);
+
+      $('costTotal').textContent = fmtUSD(calc.costTotal);
+      $('costTotalARS').textContent = fmtARS(calc.costTotal, settings.rate);
 
       const profitEl = $('profit');
-      profitEl.textContent = fmtUSD(profit);
-      $('profitARS').textContent = fmtARS(profit, rate);
+      profitEl.textContent = fmtUSD(calc.profit);
+      $('profitARS').textContent = fmtARS(calc.profit, settings.rate);
 
       const marginEl = $('margin');
-      marginEl.textContent = fmtPct(marginPct);
+      marginEl.textContent = fmtPct(calc.marginPct);
 
-      profitEl.classList.toggle('neg', profit < 0);
-      profitEl.classList.toggle('pos', profit >= 0);
-      marginEl.classList.toggle('neg', marginPct < 0);
-      marginEl.classList.toggle('pos', marginPct >= 0);
+      profitEl.classList.toggle('neg', calc.profit < 0);
+      profitEl.classList.toggle('pos', calc.profit >= 0);
+      marginEl.classList.toggle('neg', calc.marginPct < 0);
+      marginEl.classList.toggle('pos', calc.marginPct >= 0);
 
       const rows = [
-        ['IIBB', vIibb],
-        ['IVA', vIva],
-        ['MELI', vMeli],
-        ['Publicidad', vAds],
-        ['Financiamiento', vFin],
-        ['Envío', ship],
-        ['Logística', log],
+        ['IIBB', calc.vIibb],
+        ['IVA', calc.vIva],
+        ['MELI', calc.vMeli],
+        ['Publicidad', calc.vAds],
+        ['Financiamiento', calc.vFin],
+        ['Envío', settings.ship],
+        ['Logística', settings.log],
       ];
+
       const tbody = $('breakdown');
-      tbody.innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${fmtUSD(v)}</td><td>${fmtARS(v, rate)}</td></tr>`).join('')
-        + `<tr><td><strong>PV ingresado</strong></td><td><strong>${fmtUSD(pv)}</strong></td><td><strong>${fmtARS(pv, rate)}</strong></td></tr>`
-        + `<tr><td><strong>Costo total</strong></td><td><strong>${fmtUSD(costTotal)}</strong></td><td><strong>${fmtARS(costTotal, rate)}</strong></td></tr>`
-        + `<tr><td><strong>Ganancia</strong></td><td><strong>${fmtUSD(profit)}</strong></td><td><strong>${fmtARS(profit, rate)}</strong></td></tr>`;
+      tbody.innerHTML = rows.map(([k, v]) =>
+        `<tr><td>${k}</td><td>${fmtUSD(v)}</td><td>${fmtARS(v, settings.rate)}</td></tr>`
+      ).join('')
+        + `<tr><td><strong>PV ingresado</strong></td><td><strong>${fmtUSD(pv)}</strong></td><td><strong>${fmtARS(pv, settings.rate)}</strong></td></tr>`
+        + `<tr><td><strong>Costo total</strong></td><td><strong>${fmtUSD(calc.costTotal)}</strong></td><td><strong>${fmtARS(calc.costTotal, settings.rate)}</strong></td></tr>`
+        + `<tr><td><strong>Ganancia</strong></td><td><strong>${fmtUSD(calc.profit)}</strong></td><td><strong>${fmtARS(calc.profit, settings.rate)}</strong></td></tr>`;
     }
 
     function toParams() {
       const data = {
-        cu: $('costUSD').value, ca: $('costARS').value, pu: $('priceUSD').value, pa: $('priceARS').value,
-        ii: $('iibb').value, iv: $('iva').value, me: $('meli').value, ad: $('ads').value, sh: $('ship').value, lg: $('log').value,
-        r: $('rate').value, fs: $('finSelect').value, fp: $('finPct').value
+        cu: $('costUSD').value,
+        ca: $('costARS').value,
+        pu: $('priceUSD').value,
+        pa: $('priceARS').value,
+        ii: $('iibb').value,
+        iv: $('iva').value,
+        me: $('meli').value,
+        ad: $('ads').value,
+        sh: $('ship').value,
+        lg: $('log').value,
+        r: $('rate').value,
+        fs: $('finSelect').value,
+        fp: $('finPct').value
       };
       return new URLSearchParams(data).toString();
     }
+
     function fromParams() {
       const q = new URLSearchParams(location.search);
-      const map = { cu: 'costUSD', ca: 'costARS', pu: 'priceUSD', pa: 'priceARS', ii: 'iibb', iv: 'iva', me: 'meli', ad: 'ads', sh: 'ship', lg: 'log', r: 'rate', fs: 'finSelect', fp: 'finPct' };
-      Object.entries(map).forEach(([k, id]) => { if (q.has(k)) $(id).value = q.get(k); });
-      // sincronizar una vez tras cargar por URL
+      const map = {
+        cu: 'costUSD',
+        ca: 'costARS',
+        pu: 'priceUSD',
+        pa: 'priceARS',
+        ii: 'iibb',
+        iv: 'iva',
+        me: 'meli',
+        ad: 'ads',
+        sh: 'ship',
+        lg: 'log',
+        r: 'rate',
+        fs: 'finSelect',
+        fp: 'finPct'
+      };
+      Object.entries(map).forEach(([k, id]) => {
+        if (q.has(k)) $(id).value = q.get(k);
+      });
       syncCurrency('rate');
     }
 
     $('share').addEventListener('click', async () => {
       const url = `${location.origin}${location.pathname}?${toParams()}`;
-      try { await navigator.clipboard.writeText(url); $('share').textContent = '✅ Enlace copiado'; setTimeout(() => $('share').textContent = '🔗 Copiar enlace', 1800); } catch (e) { alert(url); }
+      try {
+        await navigator.clipboard.writeText(url);
+        $('share').textContent = '✅ Enlace copiado';
+        setTimeout(() => $('share').textContent = '🔗 Copiar enlace', 1800);
+      } catch (e) {
+        alert(url);
+      }
     });
-    $('reset').addEventListener('click', () => { location.href = location.pathname; });
 
-    fromParams();
-    recalc();
+    $('reset').addEventListener('click', () => {
+      location.href = location.pathname;
+    });
 
-    // Dólar Blue API
     async function loadBlue() {
       try {
         const res = await fetch('https://dolarapi.com/v1/dolares/blue');
@@ -556,17 +715,191 @@
         if (data && data.venta) {
           const rate = parseFloat(data.venta);
           $('rate').value = isFinite(rate) ? rate : $('rate').value;
-          const when = data.fechaActualizacion ? new Date(data.fechaActualizacion).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+          const when = data.fechaActualizacion
+            ? new Date(data.fechaActualizacion).toLocaleString('es-AR', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })
+            : '';
           $('blueMeta').textContent = `Blue venta: ${rate} • ${when ? 'Act. ' + when : ''}`;
           syncCurrency('rate');
           recalc();
+          recalcBulk();
         }
       } catch (e) {
         $('blueMeta').textContent = 'No se pudo obtener la cotización Blue';
       }
     }
+
     $('fetchBlue').addEventListener('click', loadBlue);
-    // Intento automático al cargar
+
+    // =========================
+    // CARGA MASIVA
+    // =========================
+
+    const bulkBody = $('bulkTableBody');
+
+    function createBulkRow(data = {}) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="name-col"><input type="text" class="bulk-name" value="${data.name || ''}" placeholder="Producto" /></td>
+        <td><input type="number" class="bulk-cost-usd" min="0" step="0.01" value="${data.costUSD ?? ''}" /></td>
+        <td><input type="number" class="bulk-price-usd" min="0" step="0.01" value="${data.priceUSD ?? ''}" /></td>
+        <td class="bulk-cost-ars muted">—</td>
+        <td class="bulk-price-ars muted">—</td>
+        <td class="bulk-total muted">—</td>
+        <td class="bulk-profit muted">—</td>
+        <td class="bulk-margin muted">—</td>
+        <td><button type="button" class="btn danger bulk-delete">✕</button></td>
+      `;
+
+      tr.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('input', () => recalcBulk());
+      });
+
+      tr.querySelector('.bulk-delete').addEventListener('click', () => {
+        tr.remove();
+        recalcBulk();
+      });
+
+      bulkBody.appendChild(tr);
+      recalcBulk();
+    }
+
+    function recalcBulk() {
+      const settings = getSettings();
+      const rows = Array.from(bulkBody.querySelectorAll('tr'));
+
+      let totalCost = 0;
+      let totalProfit = 0;
+      let totalMargin = 0;
+      let validMargins = 0;
+
+      rows.forEach(tr => {
+        const costUSD = parseFloat(tr.querySelector('.bulk-cost-usd').value) || 0;
+        const priceUSD = parseFloat(tr.querySelector('.bulk-price-usd').value) || 0;
+
+        const calc = calculateRow(costUSD, priceUSD, settings);
+
+        const costARS = settings.rate > 0 ? costUSD * settings.rate : NaN;
+        const priceARS = settings.rate > 0 ? priceUSD * settings.rate : NaN;
+
+        tr.querySelector('.bulk-cost-ars').textContent = isFinite(costARS) ? `ARS ${costARS.toFixed(0)}` : '—';
+        tr.querySelector('.bulk-price-ars').textContent = isFinite(priceARS) ? `ARS ${priceARS.toFixed(0)}` : '—';
+        tr.querySelector('.bulk-total').textContent = fmtUSD(calc.costTotal);
+
+        const profitEl = tr.querySelector('.bulk-profit');
+        profitEl.textContent = fmtUSD(calc.profit);
+        profitEl.classList.toggle('neg', calc.profit < 0);
+        profitEl.classList.toggle('pos', calc.profit >= 0);
+
+        const marginEl = tr.querySelector('.bulk-margin');
+        marginEl.textContent = fmtPct(calc.marginPct);
+        marginEl.classList.toggle('neg', calc.marginPct < 0);
+        marginEl.classList.toggle('pos', calc.marginPct >= 0);
+
+        totalCost += calc.costTotal;
+        totalProfit += calc.profit;
+        if (isFinite(calc.marginPct)) {
+          totalMargin += calc.marginPct;
+          validMargins++;
+        }
+      });
+
+      $('bulkRowsCount').textContent = rows.length;
+      $('bulkTotalCost').textContent = fmtUSD(totalCost);
+      $('bulkTotalProfit').textContent = fmtUSD(totalProfit);
+      $('bulkAvgMargin').textContent = validMargins ? fmtPct(totalMargin / validMargins) : '—';
+    }
+
+    $('addRow').addEventListener('click', () => createBulkRow());
+
+    $('clearRows').addEventListener('click', () => {
+      bulkBody.innerHTML = '';
+      recalcBulk();
+    });
+
+    $('togglePaste').addEventListener('click', () => {
+      $('pasteBox').classList.toggle('active');
+    });
+
+    $('processPaste').addEventListener('click', () => {
+      const text = $('pasteArea').value.trim();
+      if (!text) return;
+
+      const lines = text.split(/\r?\n/).filter(Boolean);
+
+      lines.forEach(line => {
+        const cols = line.split('\t');
+        if (cols.length >= 3) {
+          createBulkRow({
+            name: cols[0]?.trim() || '',
+            costUSD: parseFloat((cols[1] || '').replace(',', '.')) || 0,
+            priceUSD: parseFloat((cols[2] || '').replace(',', '.')) || 0
+          });
+        }
+      });
+
+      $('pasteArea').value = '';
+      $('pasteBox').classList.remove('active');
+      recalcBulk();
+    });
+
+    $('exportCsv').addEventListener('click', () => {
+      const settings = getSettings();
+      const rows = Array.from(bulkBody.querySelectorAll('tr'));
+
+      const csvRows = [
+        [
+          'Producto',
+          'Costo USD',
+          'Precio USD',
+          'Costo ARS',
+          'Precio ARS',
+          'Costo Total USD',
+          'Ganancia USD',
+          'Margen %'
+        ].join(',')
+      ];
+
+      rows.forEach(tr => {
+        const name = (tr.querySelector('.bulk-name').value || '').replace(/,/g, ' ');
+        const costUSD = parseFloat(tr.querySelector('.bulk-cost-usd').value) || 0;
+        const priceUSD = parseFloat(tr.querySelector('.bulk-price-usd').value) || 0;
+        const calc = calculateRow(costUSD, priceUSD, settings);
+
+        const costARS = settings.rate > 0 ? costUSD * settings.rate : 0;
+        const priceARS = settings.rate > 0 ? priceUSD * settings.rate : 0;
+
+        csvRows.push([
+          `"${name}"`,
+          fmtNum(costUSD),
+          fmtNum(priceUSD),
+          fmtNum(costARS),
+          fmtNum(priceARS),
+          fmtNum(calc.costTotal),
+          fmtNum(calc.profit),
+          fmtNum(calc.marginPct)
+        ].join(','));
+      });
+
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'calculadora_masiva.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // init
+    fromParams();
+    recalc();
+    createBulkRow({ name: 'Producto 1', costUSD: 130, priceUSD: 185 });
+    createBulkRow({ name: 'Producto 2', costUSD: 144, priceUSD: 218.8 });
     loadBlue();
   </script>
 </body>
