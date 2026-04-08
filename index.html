@@ -420,12 +420,21 @@
             <summary>💱 Tipo de cambio y ARS</summary>
             <div class="details-body">
               <div class="row">
+                <label for="rateSource" class="small">Fuente de cotización</label>
+              </div>
+              <div class="inline" style="grid-template-columns: 1.2fr auto; margin-top:6px">
+                <select id="rateSource">
+                  <option value="cripto.usdt">Dólar Cripto (USDT)</option>
+                  <option value="blue">Dólar Blue</option>
+                </select>
+                <button id="refreshRate" type="button" class="btn primary">Actualizar cotización</button>
+              </div>
+              <div class="row" style="margin-top:12px">
                 <label for="rate" class="small">Tipo de cambio (ARS por USD)</label>
               </div>
               <input id="rate" type="number" min="0" step="0.01" value="1450" />
               <div class="row" style="margin-top:10px; gap:8px">
-                <button id="fetchBlue" type="button" class="btn primary">💙 Usar Dólar Blue</button>
-                <span id="blueMeta" class="small muted"></span>
+                <span id="rateMeta" class="small muted"></span>
               </div>
               <p class="small muted">Al editar USD se completa ARS y viceversa. Cambiar el tipo de cambio recalcula
                 automáticamente.</p>
@@ -664,6 +673,7 @@
         sh: $('ship').value,
         lg: $('log').value,
         r: $('rate').value,
+        rs: $('rateSource').value,
         fs: $('finSelect').value,
         fp: $('finPct').value
       };
@@ -684,6 +694,7 @@
         sh: 'ship',
         lg: 'log',
         r: 'rate',
+        rs: 'rateSource',
         fs: 'finSelect',
         fp: 'finPct'
       };
@@ -691,6 +702,7 @@
         if (q.has(k)) $(id).value = q.get(k);
       });
       syncCurrency('rate');
+      return q.has('r');
     }
 
     $('share').addEventListener('click', async () => {
@@ -708,33 +720,54 @@
       location.href = location.pathname;
     });
 
-    async function loadBlue() {
+    function formatRateTimestamp(timestamp) {
+      if (!timestamp) return '';
+      return new Date(timestamp * 1000).toLocaleString('es-AR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    async function loadSelectedRate() {
       try {
-        const res = await fetch('https://dolarapi.com/v1/dolares/blue');
+        $('rateMeta').textContent = 'Actualizando cotización...';
+        const source = $('rateSource').value;
+        const res = await fetch('https://criptoya.com/api/dolar');
         const data = await res.json();
-        if (data && data.venta) {
-          const rate = parseFloat(data.venta);
+        let rate;
+        let label;
+        let timestamp;
+
+        if (source === 'blue') {
+          rate = parseFloat(data?.blue?.ask);
+          label = 'Blue';
+          timestamp = data?.blue?.timestamp;
+        } else {
+          rate = parseFloat(data?.cripto?.usdt?.bid);
+          label = 'Cripto USDT';
+          timestamp = data?.cripto?.usdt?.timestamp;
+        }
+
+        if (isFinite(rate)) {
           $('rate').value = isFinite(rate) ? rate : $('rate').value;
-          const when = data.fechaActualizacion
-            ? new Date(data.fechaActualizacion).toLocaleString('es-AR', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            })
-            : '';
-          $('blueMeta').textContent = `Blue venta: ${rate} • ${when ? 'Act. ' + when : ''}`;
+          const when = formatRateTimestamp(timestamp);
+          $('rateMeta').textContent = `${label}: ${rate.toFixed(2)} • ${when ? 'Act. ' + when : ''}`;
           syncCurrency('rate');
           recalc();
           recalcBulk();
+        } else {
+          $('rateMeta').textContent = 'No se pudo leer la cotización seleccionada';
         }
       } catch (e) {
-        $('blueMeta').textContent = 'No se pudo obtener la cotización Blue';
+        $('rateMeta').textContent = 'No se pudo obtener la cotización';
       }
     }
 
-    $('fetchBlue').addEventListener('click', loadBlue);
+    $('refreshRate').addEventListener('click', loadSelectedRate);
+    $('rateSource').addEventListener('change', loadSelectedRate);
 
     // =========================
     // CARGA MASIVA
@@ -896,7 +929,8 @@
     });
 
     // init
-    fromParams();
+    const hasCustomRate = fromParams();
+    if (!hasCustomRate) loadSelectedRate();
     recalc();
     createBulkRow({ name: 'Producto 1', costUSD: 130, priceUSD: 185 });
     createBulkRow({ name: 'Producto 2', costUSD: 144, priceUSD: 218.8 });
