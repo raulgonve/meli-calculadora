@@ -746,7 +746,12 @@
           label = 'Blue';
           timestamp = data?.blue?.timestamp;
         } else {
-          rate = parseFloat(data?.cripto?.usdt?.bid);
+          const cryptoAsk = parseFloat(data?.cripto?.usdt?.ask);
+          const cryptoBid = parseFloat(data?.cripto?.usdt?.bid);
+          rate = Math.max(
+            isFinite(cryptoAsk) ? cryptoAsk : -Infinity,
+            isFinite(cryptoBid) ? cryptoBid : -Infinity
+          );
           label = 'Cripto USDT';
           timestamp = data?.cripto?.usdt?.timestamp;
         }
